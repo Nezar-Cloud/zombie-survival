@@ -1,3 +1,19 @@
+game.onUpdate(function() {
+    let zombies = sprites.allOfKind(SpriteKind.Enemy)
+    for (let z of zombies){
+        if (z.vx < 0){
+            let right = sprites.readDataImage(z, "right")
+               z.setImage(right)
+        }
+        else {
+        let left = sprites.readDataImage(z, "left")    
+        z.setImage(left)
+        }
+    }
+})
+sprites.onOverlap(SpriteKind.Player, SpriteKind.Enemy, function(sprite: Sprite, otherSprite: Sprite) {
+    game.over(false)
+})
 game.onUpdateInterval(1000, function() {
   let zombies  = sprites.allOfKind(SpriteKind.Enemy)  
   let randomZombieNumber = randint(0, zombies.length - 1) 
@@ -11,8 +27,15 @@ function addZombies () {
     zombieNumber = randint(0, zombieImgs.length - 1)
     zombie = sprites.create(zombieImgs[zombieNumber], SpriteKind.Enemy)
     zombie.follow(oldLady, 10)
+    // Make a copy of the zombie Image 
     tiles.placeOnRandomTile(zombie, sprites.castle.tilePath5)
+      let leftImg  = zombieImgs[zombieNumber].clone()
+      leftImg.flipX() // Flip image to the left
+
+  sprites.setDataImage(zombie, "right", zombieImgs[zombieNumber])
+  sprites.setDataImage(zombie, "left",leftImg)
 }
+
 
 let wave = 1 
 function nextWave(){
